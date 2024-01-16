@@ -1,5 +1,6 @@
 package com.example.demo.config;
 
+import com.example.demo.model.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,6 +27,7 @@ public class SecurityConfiguration {
             .disable()
             .authorizeHttpRequests()
                 .antMatchers("/api/v1/auth/**").permitAll()
+                .antMatchers("/api/v1/demo/hi").hasRole(Role.ADMIN.name())
             .anyRequest()
             .authenticated()
             .and()
