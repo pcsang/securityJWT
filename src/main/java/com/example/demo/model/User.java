@@ -3,7 +3,7 @@
  * Created on April 21, 2023
  */
 
-package com.example.demo.user;
+package com.example.demo.model;
 
 
 import lombok.AllArgsConstructor;
