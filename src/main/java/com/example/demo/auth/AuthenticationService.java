@@ -1,9 +1,13 @@
 package com.example.demo.auth;
 
-import com.example.demo.config.JwtService;
-import com.example.demo.user.Role;
-import com.example.demo.user.User;
-import com.example.demo.user.UserRepository;
+import com.example.demo.model.UserInfoDetails;
+import com.example.demo.service.JwtService;
+import com.example.demo.model.AuthenticationRequest;
+import com.example.demo.model.AuthenticationResponse;
+import com.example.demo.model.RegisterRequest;
+import com.example.demo.model.Role;
+import com.example.demo.model.UserInfo;
+import com.example.demo.model.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,16 +24,16 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     public AuthenticationResponse register(RegisterRequest request) {
-        User user = User.builder()
+        UserInfo userInfo = UserInfo.builder()
                 .firstname(request.getFirstname())
                 .lastname(request.getLastname())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(Role.USER)
                 .build();
-        repository.save(user);
-        String jwtToken = jwtService.generateToken(user);
-
+        repository.save(userInfo);
+        UserInfoDetails userInfoDetails = new UserInfoDetails(userInfo);
+        String jwtToken = jwtService.generateToken(userInfoDetails);
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .build();
@@ -42,8 +46,9 @@ public class AuthenticationService {
                         request.getPassword()
                 )
         );
-        User user = repository.findByEmail(request.getEmail()).orElse(new User());
-        String jwtToken = jwtService.generateToken(user);
+        UserInfo user = repository.findByEmail(request.getEmail()).orElse(new UserInfo());
+        UserInfoDetails userInfoDetails = new UserInfoDetails(user);
+        String jwtToken = jwtService.generateToken(userInfoDetails);
         return AuthenticationResponse.builder()
                 .token(jwtToken).build();
     }
